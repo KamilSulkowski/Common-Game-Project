@@ -2,6 +2,10 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
+# For testing own game scene
+/[Aa]ssets/[Ss]cenes/[Tt]est/*
+#
+
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
