@@ -1,18 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class UnitSpawnSystem : MonoBehaviour
 {
-
-    public GameObject unitPrefab;
     public GameObject[] unitPrefabs;
     public Grid grid;
+    public TextMeshProUGUI selectedUnitText;
+    public GameObject panel;
 
-    private bool isSpawnMode = false;
+    private GameObject selectedUnit;
     private Tilemap[] tileMaps;
 
     // Tilemaps that not allow to spawn unit
@@ -20,38 +19,51 @@ public class UnitSpawnSystem : MonoBehaviour
 
     void Start()
     {
+        // Set tilemaps from grid children to array
         SetTileMaps(grid);
     }
 
     void Update()
     {
-        // Spawn unit on left mouse click
-        if (isSpawnMode)
+        // Hold left and right mouse buttons click
+        OnMouseClick();
+    }
+
+    // public method to select unit to spawn
+    public void SetUnitToSpawn(GameObject unit)
+    {
+        selectedUnitText.gameObject.SetActive(true);
+        selectedUnitText.text = unit.name;
+        selectedUnit = unit;
+        Debug.Log("Unit " + unit.name + " selected");
+    }
+
+    // method to handle mouse click
+    void OnMouseClick()
+    {
+        if (Input.GetMouseButtonDown(0) && selectedUnit != null)
         {
-            if (Input.GetMouseButtonDown(0))
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 panelPos = Camera.main.ScreenToWorldPoint(panel.transform.position);
+
+            // Check if clicked on unit spawn panel
+            if ((mousePos.x > panelPos.x && mousePos.x < panelPos.x + 6) && (mousePos.y > panelPos.y && mousePos.y < panelPos.y + 3))
             {
-                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (CheckPlaceToSpawn(mousePos))
-                {
-                    SpawnUnit(mousePos, unitPrefab);
-                }
+                Debug.Log("Clicked on unit spawn panel");
+                return;
+            }
+
+            // Check if clicked on tilemap
+            if (CheckPlaceToSpawn(mousePos))
+            {
+                SpawnUnit(mousePos, selectedUnit);
             }
         }
 
-        // Press S to toggle spawn mode
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetMouseButton(1))
         {
-            isSpawnMode = !isSpawnMode;
-        }
-    }
-
-    // Draw info about spawn mode on left top corner
-    void OnGUI()
-    {
-        if (isSpawnMode)
-        {
-            GUI.backgroundColor = Color.gray;
-            GUI.Box(new Rect(10, 10, 150, 30), "Spawn unit mode");
+            selectedUnit = null;
+            selectedUnitText.gameObject.SetActive(false);
         }
     }
 
@@ -65,6 +77,7 @@ public class UnitSpawnSystem : MonoBehaviour
             {
                 if (notAllowTileMaps.Contains(tilemap.name))
                 {
+                    Debug.Log("Can't spawn unit on there " + tilemap.name);
                     return false;
                 }
             }
@@ -87,5 +100,6 @@ public class UnitSpawnSystem : MonoBehaviour
     void SpawnUnit(Vector2 position, GameObject unitToSpawn)
     {
         Instantiate(unitToSpawn, position, Quaternion.identity);
+        Debug.Log("Unit " + unitToSpawn.name + " spawned");
     }
 }
