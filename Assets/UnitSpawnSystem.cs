@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class UnitSpawnSystem : MonoBehaviour
 {
 
     public GameObject unitPrefab;
+    public GameObject[] unitPrefabs;
     public Grid grid;
 
     private bool isSpawnMode = false;
