@@ -9,6 +9,7 @@ TagManager:
   - Water
   - Map
   - Object
+  - Unit
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Water
   - Grass
   - Object
-  - 
+  - Units
   - 
   - 
   - 
