@@ -5,10 +5,23 @@ using UnityEngine;
 
 public class UnitSelectionSystem : MonoBehaviour
 {
+    public static UnitSelectionSystem Instance {  get; private set; }
+
     public GameObject selectPrefab;
 
     private List<GameObject> selectedUnits = new List<GameObject>();
     private List<GameObject> selects = new List<GameObject>();
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        } else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Update()
     {
@@ -98,6 +111,10 @@ public class UnitSelectionSystem : MonoBehaviour
     // Get selected units
     public List<GameObject> getSelectedUnits()
     {
-        return selectedUnits;
+        if (selectedUnits != null)
+        {
+            return selectedUnits;
+        }
+        return null;
     }
 }
