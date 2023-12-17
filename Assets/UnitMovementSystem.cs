@@ -1,18 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class UnitMovementSystem : MonoBehaviour
 {
     public float movementSpeed = 2f;
 
     private List<GameObject> units;
-    private Coroutine movementCoroutine;
+    private NavMeshAgent navMeshAgent;
 
-    // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -27,65 +27,53 @@ public class UnitMovementSystem : MonoBehaviour
 
                 foreach (GameObject unit in units)
                 {
-                    UnitMovement(unit, mousePosition);
+                    Vector2 target = CalculateOffsetDestination(mousePosition, units.IndexOf(unit), units.Count);
+                    MoveTowards(unit, target);
                 }
             }
         }
     }
 
-    void UnitMovement(GameObject unit, Vector2 targetPosition)
+    private void MoveTowards(GameObject unit, Vector2 targetPosition)
     {
-        if (movementCoroutine != null)
+        if (targetPosition == null)
         {
-            StopCoroutine(movementCoroutine);
+            Debug.LogError("MoveTowards called with a null targetPosition.");
+            return;
         }
 
-        movementCoroutine = StartCoroutine(MoveTowards(unit, targetPosition));
+        if (unit == null)
+        {
+            Debug.LogError("MoveTowards called with a null unit GameObject.");
+            return;
+        }
+
+        Debug.Log(unit.name + " is moving towards " + targetPosition);
+
+        UnitMovement unitMovement = unit.GetComponent<UnitMovement>();
+        if (unitMovement != null)
+        {
+            Debug.Log("Found UnitMovement component on " + unit.name);
+            unitMovement.Move(targetPosition);
+        }
+        else
+        {
+            Debug.LogError("UnitMovement component not found on " + unit.name);
+        }
     }
 
-    private IEnumerator MoveTowards(GameObject unit, Vector2 targetPosition)
+    Vector2 CalculateOffsetDestination(Vector3 destination, int index, int totalUnits)
     {
-        Vector2 startPosition = unit.transform.position;
-        Animator animator = unit.GetComponent<Animator>();
+        int unitsPerRow = Mathf.CeilToInt(Mathf.Sqrt(totalUnits));
+        float spacing = 1f;
 
-        float distance = Vector2.Distance(startPosition, targetPosition);
-        Vector2 direction = (targetPosition - startPosition).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        int row = index / unitsPerRow;
+        int column = index % unitsPerRow;
 
-        if (angle < 0)
-        {
-            angle += 360f;
-        }
+        float offsetX = (column - unitsPerRow / 2) * spacing;
+        float offsetY = (row - unitsPerRow / 2) * spacing;
 
-        int animatorIndex = Mathf.RoundToInt(angle / 45f) % 8;
-
-        Debug.Log(animatorIndex + "/8");
-
-        animator.SetBool("Idle", false);
-        string animation = "Idle";
-
-        switch (animatorIndex)
-        {
-            case 0: animation = "MoveRight"; break;
-            case 1: animation = "MoveTopRight"; break;
-            case 2: animation = "MoveTop"; break;
-            case 3: animation = "MoveTopLeft"; break;
-            case 4: animation = "MoveLeft"; break;
-            case 5: animation = "MoveDownLeft"; break;
-            case 6: animation = "MoveDown"; break;
-            case 7: animation = "MoveDownRight"; break;
-        }
-        animator.SetBool(animation, true);
-        while (distance > 0.1f)
-        {
-            Vector2 newPosition = Vector2.MoveTowards(unit.transform.position, targetPosition, movementSpeed * Time.deltaTime);
-            unit.transform.position = newPosition;
-            distance = Vector2.Distance(unit.transform.position, targetPosition);
-            yield return null;
-        }
-
-        unit.transform.position = targetPosition;
-        animator.SetBool(animation, false);
-        animator.SetBool("Idle", true);
+        return new Vector2(destination.x + offsetX, destination.y + offsetY);
     }
+
 }
