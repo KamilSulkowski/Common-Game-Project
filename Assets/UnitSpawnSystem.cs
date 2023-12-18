@@ -6,30 +6,40 @@ using UnityEngine.Tilemaps;
 
 public class UnitSpawnSystem : MonoBehaviour
 {
+    // Array of prefabs for different unit types.
     public GameObject[] unitPrefabs;
+
+    // Reference to the grid in the game environment.
     public Grid grid;
+
+    // UI text element to display the selected unit's name.
     public TextMeshProUGUI selectedUnitText;
+
+    // Panel representing the unit spawn area.
     public GameObject panel;
 
+    // Currently selected unit for spawning.
     private GameObject selectedUnit;
+
+    // Array of tilemaps in the environment.
     private Tilemap[] tileMaps;
 
-    // Tilemaps that not allow to spawn unit
+    // List of tilemap names where units cannot be spawned.
     private List<string> notAllowTileMaps = new List<string> { "Water", "Object" };
 
     void Start()
     {
-        // Set tilemaps from grid children to array
+        // Initialize tilemaps from the grid.
         SetTileMaps(grid);
     }
 
     void Update()
     {
-        // Hold left and right mouse buttons click
+        // Handle mouse click events.
         OnMouseClick();
     }
 
-    // public method to select unit to spawn
+    // Public method to select a unit type for spawning.
     public void SetUnitToSpawn(GameObject unit)
     {
         selectedUnitText.gameObject.SetActive(true);
@@ -38,7 +48,7 @@ public class UnitSpawnSystem : MonoBehaviour
         Debug.Log("Unit " + unit.name + " selected");
     }
 
-    // method to handle mouse click
+    // Handles mouse click events for spawning units.
     void OnMouseClick()
     {
         if (Input.GetMouseButtonDown(0) && selectedUnit != null)
@@ -46,46 +56,54 @@ public class UnitSpawnSystem : MonoBehaviour
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 panelPos = Camera.main.ScreenToWorldPoint(panel.transform.position);
 
-            // Check if clicked on unit spawn panel
-            if ((mousePos.x > panelPos.x && mousePos.x < panelPos.x + 6) && (mousePos.y > panelPos.y && mousePos.y < panelPos.y + 3))
+            // Avoid spawning when clicking on the unit spawn panel.
+            if (!IsClickOnPanel(mousePos, panelPos))
             {
-                Debug.Log("Clicked on unit spawn panel");
-                return;
-            }
-
-            // Check if clicked on tilemap
-            if (CheckPlaceToSpawn(mousePos))
-            {
-                SpawnUnit(mousePos, selectedUnit);
+                // Spawn unit if the location is valid.
+                if (CheckPlaceToSpawn(mousePos))
+                {
+                    SpawnUnit(mousePos, selectedUnit);
+                }
             }
         }
 
+        // Deselect unit on right-click.
         if (Input.GetMouseButton(1))
         {
-            selectedUnit = null;
-            selectedUnitText.gameObject.SetActive(false);
+            DeselectUnit();
         }
     }
 
-    // Check if mouse position is valid to spawn unit
+    // Checks whether the click was on the unit spawn panel.
+    bool IsClickOnPanel(Vector2 mousePos, Vector2 panelPos)
+    {
+        bool isWithinPanelX = mousePos.x > panelPos.x && mousePos.x < panelPos.x + 6;
+        bool isWithinPanelY = mousePos.y > panelPos.y && mousePos.y < panelPos.y + 3;
+
+        if (isWithinPanelX && isWithinPanelY)
+        {
+            Debug.Log("Clicked on unit spawn panel");
+            return true;
+        }
+        return false;
+    }
+
+    // Checks if the mouse position is valid for spawning a unit.
     bool CheckPlaceToSpawn(Vector2 mousePosition)
     {
         foreach (Tilemap tilemap in tileMaps)
         {
             Vector3Int cellPosition = tilemap.WorldToCell(mousePosition);
-            if (tilemap.HasTile(cellPosition))
+            if (tilemap.HasTile(cellPosition) && notAllowTileMaps.Contains(tilemap.name))
             {
-                if (notAllowTileMaps.Contains(tilemap.name))
-                {
-                    Debug.Log("Can't spawn unit on there " + tilemap.name);
-                    return false;
-                }
+                Debug.Log("Can't spawn unit on " + tilemap.name);
+                return false;
             }
         }
         return true;
     }
 
-    // Set tilemaps from grid children to array
+    // Initializes tilemaps from the provided grid object.
     void SetTileMaps(Grid gridObject)
     {
         int tilemapCount = gridObject.transform.childCount;
@@ -96,10 +114,18 @@ public class UnitSpawnSystem : MonoBehaviour
         }
     }
 
-    // Spawn unit at position
+    // Spawns a unit at the specified position.
     void SpawnUnit(Vector2 position, GameObject unitToSpawn)
     {
         Instantiate(unitToSpawn, position, Quaternion.identity);
         Debug.Log("Unit " + unitToSpawn.name + " spawned");
     }
+
+    // Deselects the currently selected unit.
+    void DeselectUnit()
+    {
+        selectedUnit = null;
+        selectedUnitText.gameObject.SetActive(false);
+    }
 }
+

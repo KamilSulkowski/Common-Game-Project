@@ -9,7 +9,7 @@ public class UnitMovement : MonoBehaviour
     private NavMeshAgent navMeshAgent;
     private Animator animator;
     private Vector2 target;
-    private int currentState = -1;
+    private int currentState = IdleStateIndex;
     private const int IdleStateIndex = -1;
 
     void Start()
@@ -22,6 +22,7 @@ public class UnitMovement : MonoBehaviour
 
     void Update()
     {
+        // Update the unit's animation state based on movement.
         if (!navMeshAgent.pathPending && (!navMeshAgent.hasPath || navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance))
         {
             SetAnimationState(IdleStateIndex);
@@ -32,12 +33,14 @@ public class UnitMovement : MonoBehaviour
         }
     }
 
+    // Moves the unit to a specified position.
     public void Move(Vector2 targetPosition)
     {
         target = targetPosition;
         navMeshAgent.SetDestination(target);
     }
 
+    // Sets the animation state based on the unit's direction of movement.
     private void SetAnimationBasedOnDirection()
     {
         if (animator == null)
@@ -54,12 +57,13 @@ public class UnitMovement : MonoBehaviour
         }
 
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        angle = angle < 0 ? angle + 360f : angle;
+        angle = (angle < 0) ? angle + 360f : angle;
         int animatorIndex = Mathf.RoundToInt(angle / 45f) % 8;
 
         SetAnimationState(animatorIndex);
     }
 
+    // Sets the animator to a specific state.
     private void SetAnimationState(int state)
     {
         if (currentState != state)
@@ -69,6 +73,7 @@ public class UnitMovement : MonoBehaviour
         }
     }
 }
+
 
 
 

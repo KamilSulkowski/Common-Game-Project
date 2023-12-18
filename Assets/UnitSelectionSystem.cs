@@ -5,19 +5,26 @@ using UnityEngine;
 
 public class UnitSelectionSystem : MonoBehaviour
 {
-    public static UnitSelectionSystem Instance {  get; private set; }
+    // Singleton instance for global access.
+    public static UnitSelectionSystem Instance { get; private set; }
 
+    // Prefab for the selection indicator.
     public GameObject selectPrefab;
 
+    // List of currently selected units.
     private List<GameObject> selectedUnits = new List<GameObject>();
+
+    // List of selection indicators.
     private List<GameObject> selects = new List<GameObject>();
 
     private void Awake()
     {
+        // Ensure a single instance of the selection system.
         if (Instance == null)
         {
             Instance = this;
-        } else
+        }
+        else
         {
             Destroy(gameObject);
         }
@@ -25,96 +32,81 @@ public class UnitSelectionSystem : MonoBehaviour
 
     private void Update()
     {
+        // Handle unit selection each frame.
         SelectUnits();
     }
 
+    // Main method to handle unit selection.
     void SelectUnits()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            // Check if a unit is clicked.
             CheckIsUnit();
         }
     }
 
-    // Add select sign above selected unit
+    // Adds a visual indicator above a selected unit.
     void AddSelectSign(GameObject selectedUnit)
     {
         GameObject selected = Instantiate(selectPrefab, selectedUnit.transform.position, Quaternion.identity);
         selected.transform.parent = selectedUnit.transform;
-
         selects.Add(selected);
     }
 
-    // Check if unit is selected earlier
+    // Checks if a unit has already been selected.
     void CheckIsSelected(GameObject selectedUnit)
     {
         if (selectedUnits.Contains(selectedUnit))
         {
-            selectedUnits.Clear();
-            foreach (GameObject select in selects)
-            {
-                Destroy(select);
-            }
+            // Clear previous selections if the unit is already selected.
+            ClearSelections();
         }
 
+        // Add the new selection.
         selectedUnits.Add(selectedUnit);
         AddSelectSign(selectedUnit);
-
         Debug.Log("Unit " + selectedUnit.name + " selected");
     }
 
-    // Check if clicked on unit
+    // Clears current selections.
+    void ClearSelections()
+    {
+        selectedUnits.Clear();
+        foreach (GameObject select in selects)
+        {
+            Destroy(select);
+        }
+        selects.Clear();
+    }
+
+    // Checks if the clicked object is a unit.
     void CheckIsUnit()
     {
-        GameObject selectedUnit;
+        GameObject selectedUnit = getTargetOnClick()?.gameObject;
 
-        if (getTargetOnClick() != null)
+        if (selectedUnit != null && selectedUnit.tag == "Unit")
         {
-            selectedUnit = getTargetOnClick().gameObject;
-        } else
-        {
-            selectedUnit = null;
-        }
-
-        if (selectedUnit != null)
-        {
-            if (selectedUnit.tag == "Unit")
-            {
-                CheckIsSelected(selectedUnit);
-            }
+            CheckIsSelected(selectedUnit);
         }
         else
         {
-            selectedUnits.Clear();
-            foreach (GameObject select in selects)
-            {
-                Destroy(select);
-            }
+            ClearSelections();
         }
     }
 
-    // Get target on mouse click
+    // Returns the target GameObject clicked on.
     Collider2D getTargetOnClick()
     {
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
-
-        if (hit.collider != null)
-        {
-            return hit.collider;
-        } else
-        {
-            return null;
-        }
+        return hit.collider;
     }
 
-    // Get selected units
+    // Provides access to the currently selected units.
     public List<GameObject> getSelectedUnits()
     {
-        if (selectedUnits != null)
-        {
-            return selectedUnits;
-        }
-        return null;
+        return selectedUnits;
     }
 }
+
