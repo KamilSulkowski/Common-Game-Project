@@ -12,7 +12,7 @@ public class RandomWorldGenerator : MonoBehaviour
 
     // Tiles for different terrain and objects
     public Tile groundTile;
-    public Tile waterTile;
+    public RuleTile waterTile;
     public Tile treeTile;
     public Tile oreTile;
 
@@ -81,20 +81,26 @@ public class RandomWorldGenerator : MonoBehaviour
         // Determine tile type based on noise
         if (noise < 0.3f)
         {
-            // If noise is low, set water tile
-            SetTile(waterTilemap, x, y, waterTile);
+            // If noise is low, set water tile 2x2
+            if (x % 2 == 0 && y % 2 == 0) 
+            { 
+                SetRuleTile(waterTilemap, x, y, waterTile);
+                SetRuleTile(waterTilemap, x + 1, y, waterTile);
+                SetRuleTile(waterTilemap, x + 1, y + 1, waterTile);
+                SetRuleTile(waterTilemap, x, y + 1, waterTile);
+            }
         }
-        else
+        else if (noise > 0.4f) // offset from water
         {
             // Add randomness to object placement
             float objectChance = Random.Range(0f, 1f);
 
-            if (noise < 0.6f && objectChance < treeChance)
+            if (noise < 0.7f && objectChance < treeChance)
             {
                 // Place tree based on chance
                 SetTile(objectTilemap, x, y, treeTile);
             }
-            else if (noise < 0.7f && objectChance < oreChance)
+            else if (noise < 1.0f && objectChance < oreChance)
             {
                 // Place ore based on chance
                 SetTile(objectTilemap, x, y, oreTile);
@@ -103,6 +109,12 @@ public class RandomWorldGenerator : MonoBehaviour
     }
 
     void SetTile(Tilemap tilemap, int x, int y, Tile tile)
+    {
+        // Helper method to set a tile on a tilemap
+        tilemap.SetTile(new Vector3Int(x, y, 0), tile);
+    }
+
+    void SetRuleTile(Tilemap tilemap, int x, int y, RuleTile tile)
     {
         // Helper method to set a tile on a tilemap
         tilemap.SetTile(new Vector3Int(x, y, 0), tile);
