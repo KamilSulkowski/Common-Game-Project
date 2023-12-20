@@ -111,7 +111,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MoveUpRight
+  m_Name: State1
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -189,7 +189,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MoveLeft
+  m_Name: State4
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -215,7 +215,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MoveUp
+  m_Name: State2
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -319,7 +319,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MoveDownLeft
+  m_Name: State5
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -372,7 +372,13 @@ AnimatorController:
   m_PrefabAsset: {fileID: 0}
   m_Name: CivilianBlackAnimatiorController
   serializedVersion: 5
-  m_AnimatorParameters: []
+  m_AnimatorParameters:
+  - m_Name: Idle
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 1
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -419,7 +425,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MoveRight
+  m_Name: State0
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -523,7 +529,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MoveUpLeft
+  m_Name: State3
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -549,7 +555,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Idle
+  m_Name: State-1
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -597,7 +603,7 @@ AnimatorStateMachine:
     m_Position: {x: 375, y: 325, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1848411621821097178}
-    m_Position: {x: 410, y: 390, z: 0}
+    m_Position: {x: 440, y: 390, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4994561418891610053}
     m_Position: {x: 445, y: 455, z: 0}
@@ -651,7 +657,7 @@ AnimatorStateMachine:
     m_Position: {x: 1005, y: 1495, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2670568358634605399}
-    m_Position: {x: 20, y: 260, z: 0}
+    m_Position: {x: 0, y: 250, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -876523220914997557}
     m_Position: {x: 30, y: 360, z: 0}
@@ -672,7 +678,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MoveDown
+  m_Name: State6
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -724,7 +730,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MoveDownRight
+  m_Name: State7
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
